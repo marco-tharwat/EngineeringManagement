@@ -30,7 +30,7 @@ An ASP.NET Core MVC CRUD application for managing Students, Professors, and Depa
 
 ### Setup
 1. Clone the repository
-   git clone https://github.com/yourusername/engineering-management-system.git
+   git clone https://github.com/marco-tharwat/engineering-management-system.git
 2. Open the project in Visual Studio or VS Code
 3. Update the connection string in ApplicationDbContext.cs or appsettings.json to point to your SQL Server
 4. Run database migrations
