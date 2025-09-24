@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="my-5 py-5">
+    <div class="text-center">
+        <h1 class="display-4 fw-bold text-primary">Welcome to Faculty of Engineering</h1>
+        <p class="lead mt-3 mb-4" style="color: #4b6cb7">
+            Your centralized platform for managing <strong>Departments</strong>, <strong>Professors</strong> and <strong>Students</strong>.
+        </p>
+
+        <div class="row justify-content-center mb-4 g-3">
+            <div class="col-sm-6 col-md-3">
+                <a href="@Url.Action("Index", "Departments")" class="btn btn-lg btn-outline-primary w-100 shadow-sm">
+                    🏢 Departments
+                </a>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <a href="@Url.Action("Index", "Professors")" class="btn btn-lg btn-outline-primary w-100 shadow-sm">
+                    👨‍🏫 Professors
+                </a>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <a href="@Url.Action("Index", "Students")" class="btn btn-lg btn-outline-primary w-100 shadow-sm">
+                    🎓 Students
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

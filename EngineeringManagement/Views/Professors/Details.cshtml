@@ -1,0 +1,25 @@
+﻿@model EngineeringManagement.Models.Professor
+
+@{
+    ViewData["Title"] = "Professor Details";
+}
+
+<h1>Professor Details</h1>
+
+<div>
+    <h4>Professor</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Full Name</dt>
+        <dd class="col-sm-10">@Model.FullName</dd>
+        <dt class="col-sm-2">Department</dt>
+        <dd class="col-sm-10">@Model.Department?.Name</dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-warning">Edit</a>
+</div>
+<div>
+    <a asp-action="Index" class="btn btn-primary mt-2">Back to List</a>
+</div>

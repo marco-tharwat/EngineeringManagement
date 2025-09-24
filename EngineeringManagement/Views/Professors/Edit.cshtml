@@ -1,0 +1,30 @@
+﻿@model EngineeringManagement.Models.Professor
+
+@{
+    ViewData["Title"] = "Edit Professor";
+}
+
+<h1>Edit Professor</h1>
+
+<form asp-action="Edit">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="FullName" class="control-label"></label>
+        <input asp-for="FullName" class="form-control" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DepartmentId" class="control-label">Department</label>
+        <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.Departments">
+            <option value="">-- Select Department --</option>
+        </select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-success mt-2" />
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index" class="btn btn-primary mt-2">Back to List</a>
+</div>
