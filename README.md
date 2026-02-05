@@ -27,14 +27,14 @@ FEATURES
 SCREENSHOTS
 -----------
 
-Home page
-Students CRUD
-Department index 
+### Home Page
+![Home Page](docs/images/Home%20index.png)
 
+### Departments Index
+![Departments Index](docs/images/Departments%20index.png)
 
-- docs/images/Home index.png
-- docs/images/Departments index.png
-- docs/images/Department delete.png
+### Department Delete Restriction
+![Department Delete](docs/images/Department%20delete.png)
 
 
 TECHNOLOGIES USED
