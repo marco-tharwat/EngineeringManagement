@@ -29,13 +29,12 @@ SCREENSHOTS
 
 Home page
 Students CRUD
-Department details (showing related Students/Professors)
+Department index 
 
-Tip: Place screenshots under a folder like:
-docs/images/
-- home.png
-- students.png
-- department-details.png
+
+- docs/images/Home index.png
+- docs/images/Departments index.png
+- docs/images/Department delete.png
 
 
 TECHNOLOGIES USED
