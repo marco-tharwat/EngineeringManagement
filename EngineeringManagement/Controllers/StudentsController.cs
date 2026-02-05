@@ -1,38 +1,40 @@
-﻿using EngineeringManagement.Data;
-using EngineeringManagement.Models;
+﻿using EngineeringManagement.Models;
+using EngineeringManagement.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace EngineeringManagement.Controllers
 {
     public class StudentsController : Controller
     {
-        ApplicationDbContext context = new();
+        IRepository<Department> idr;
+        IRepository<Student> isr;
+
+        public StudentsController(IRepository<Department> idr, IRepository<Student> isr)
+        {
+            this.idr = idr;
+            this.isr = isr;
+        }
 
         [HttpGet]
         public IActionResult Index()
         {
-            var students = context.Students.Include(s => s.Department).ToList();
-            return View(students);
+            var students = isr.GetAll();
+            return View("Index", students);
         }
 
         [HttpGet]
         public IActionResult Details(int id)
         {
-            var student = context.Students.Include(s => s.Department).FirstOrDefault(s => s.Id == id);
-            if (student == null)
-            {
-                return NotFound();
-            }
-            return View(student);
+            var student = isr.GetById(id);
+            return student == null ? NotFound() : View("Details", student);
         }
 
         [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.Departments = new SelectList(context.Departments, "Id", "Name");
-            return View();
+            ViewBag.Departments = new SelectList(idr.GetAll(), "Id", "Name");
+            return View("Create");
         }
 
         [HttpPost]
@@ -41,65 +43,56 @@ namespace EngineeringManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                context.Students.Add(student);
-                context.SaveChanges();
+                isr.Add(student);
+                isr.Save();
                 return RedirectToAction("Index");
             }
-            // Reload departments for dropdown if validation fails
-            ViewBag.Departments = new SelectList(context.Departments, "Id", "Name", student.DepartmentId);
-            return View(student);
+            ViewBag.Departments = new SelectList(idr.GetAll(), "Id", "Name", student.DepartmentId);
+            return View("Create", student);
         }
 
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var student = context.Students.Include(s => s.Department).FirstOrDefault(s => s.Id == id);
+            var student = isr.GetById(id);
             if (student == null)
             {
                 return NotFound();
             }
-            ViewBag.Departments = new SelectList(context.Departments, "Id", "Name", student.DepartmentId);
-            return View(student);
+            ViewBag.Departments = new SelectList(idr.GetAll(), "Id", "Name", student.DepartmentId);
+            return View("Edit", student);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken] // Added for consistency
+        [ValidateAntiForgeryToken]
         public IActionResult Edit(Student student)
         {
             if (ModelState.IsValid)
             {
-                context.Students.Update(student);
-                context.SaveChanges();
+                isr.Update(student);
+                isr.Save();
                 return RedirectToAction("Index");
             }
-            ViewBag.Departments = new SelectList(context.Departments, "Id", "Name", student.DepartmentId);
-            return View(student);
+            ViewBag.Departments = new SelectList(idr.GetAll(), "Id", "Name", student.DepartmentId);
+            return View("Edit", student);
         }
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            var student = context.Students
-                .Include(s => s.Department)  // Make sure Department is included
-                .FirstOrDefault(s => s.Id == id);
-
-            if (student == null)
-            {
-                return NotFound();
-            }
-
-            return View(student);
+            var student = isr.GetById(id);
+            return student == null ? NotFound() : View("Delete", student);
         }
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            var student = context.Students.Include(s => s.Department).FirstOrDefault(s => s.Id == id);
+            var student = isr.GetById(id);
             if (student == null)
             {
                 return NotFound();
             }
-            context.Students.Remove(student);
-            context.SaveChanges();
+            isr.Delete(id);
+            isr.Save();
             return RedirectToAction("Index");
         }
     }

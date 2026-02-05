@@ -1,109 +1,106 @@
-﻿using EngineeringManagement.Data;
-using EngineeringManagement.Models;
+﻿using EngineeringManagement.Models;
+using EngineeringManagement.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace EngineeringManagement.Controllers
 {
     public class ProfessorsController : Controller
     {
-        ApplicationDbContext context = new();
         // GET: ProfessorsController
-        [HttpGet]
-        public ActionResult Index()
+        IRepository<Professor> ipr;
+        IRepository<Department> idr;
+        public ProfessorsController(IRepository<Professor> ipr, IRepository<Department> idr)
         {
-            var professors = context.Professors.Include(p => p.Department).ToList();
-            return View(professors);
+            this.ipr = ipr;
+            this.idr = idr;
+        }
+        [HttpGet]
+        public IActionResult Index()
+        {
+            var professors = ipr.GetAll();
+            return View("Index", professors);
         }
 
         // GET: ProfessorsController/Details/5
         [HttpGet]
-        public ActionResult Details(int id)
+        public IActionResult Details(int id)
         {
-            var professor = context.Professors.Include(p => p.Department).FirstOrDefault(p => p.Id == id);
-            if (professor == null)
-            {
-                return NotFound();
-            }
-            return View(professor);
+            var professor = ipr.GetById(id);
+            return professor == null ? NotFound() : View("Details", professor);
         }
 
         // GET: ProfessorsController/Create
         [HttpGet]
-        public ActionResult Create()
+        public IActionResult Create()
         {
-            ViewBag.Departments = new SelectList(context.Departments, "Id", "Name");
-            return View();
+            ViewBag.Departments = new SelectList(idr.GetAll(), "Id", "Name");
+            return View("Create");
         }
 
         // POST: ProfessorsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Professor professor)
+        public IActionResult Create(Professor professor)
         {
             if (ModelState.IsValid)
             {
-                context.Professors.Add(professor);
-                context.SaveChanges();
+                ipr.Add(professor);
+                ipr.Save();
                 return RedirectToAction("Index");
             }
-            // Reload departments for dropdown if validation fails
-            ViewBag.Departments = new SelectList(context.Departments, "Id", "Name", professor.DepartmentId);
-            return View(professor);
+            ViewBag.Departments = new SelectList(idr.GetAll(), "Id", "Name", professor.DepartmentId);
+            return View("Create", professor);
         }
 
         // GET: ProfessorsController/Edit/5
         [HttpGet]
-        public ActionResult Edit(int id)
+        public IActionResult Edit(int id)
         {
-            var professor = context.Professors.Include(p => p.Department).FirstOrDefault(p => p.Id == id);
+            var professor = ipr.GetById(id);
             if (professor == null)
             {
                 return NotFound();
             }
-            ViewBag.Departments = new SelectList(context.Departments, "Id", "Name", professor.DepartmentId);
-            return View(professor);
+            ViewBag.Departments = new SelectList(idr.GetAll(), "Id", "Name", professor.DepartmentId);
+            return View("Edit", professor);
         }
 
         // POST: ProfessorsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Professor professor)
+        public IActionResult Edit(Professor professor)
         {
             if (ModelState.IsValid)
             {
-                context.Professors.Update(professor);
-                context.SaveChanges();
+                ipr.Update(professor);
+                ipr.Save();
                 return RedirectToAction("Index");
             }
-            ViewBag.Departments = new SelectList(context.Departments, "Id", "Name", professor.DepartmentId);
-            return View(professor);
+            ViewBag.Departments = new SelectList(idr.GetAll(), "Id", "Name", professor.DepartmentId);
+            return View("Edit", professor);
         }
 
         // GET: ProfessorsController/Delete/5
         [HttpGet]
         public ActionResult Delete(int id)
         {
-            Professor? professor = context.Professors.Include(p => p.Department).FirstOrDefault(p => p.Id == id);
-            if (professor == null)
-            {
-                return NotFound();
-            }
-            return View(professor);
+            Professor professor = ipr.GetById(id);
+            return professor == null ? NotFound() : View("Delete", professor);
         }
         // POST: ProfessorsController/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Professor? professor = context.Professors.Include(p => p.Department).FirstOrDefault(p => p.Id == id);
+            Professor? professor = ipr.GetById(id);
             if (professor == null)
             {
                 return NotFound();
             }
-            context.Professors.Remove(professor);
-            context.SaveChanges();
+
+            ipr.Delete(id);
+            ipr.Save();
             return RedirectToAction("Index");
         }
     }

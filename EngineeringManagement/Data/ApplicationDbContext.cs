@@ -8,12 +8,20 @@ namespace EngineeringManagement.Data
         public DbSet<Student> Students { get; set; }
         public DbSet<Professor> Professors { get; set; }
         public DbSet<Department> Departments { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public ApplicationDbContext() : base()
         {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("Server=Eng01\\MSSQLSERVER01;Database=EngineeringManagement;TrustServerCertificate=True;Trusted_Connection=True");
+
         }
+        public ApplicationDbContext(DbContextOptions options) : base(options)
+        {
+
+        }
+
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    base.OnConfiguring(optionsBuilder);
+        //    optionsBuilder.UseSqlServer("Server=Marco\\MSSQLSERVER01;Database=EngineeringManagement;TrustServerCertificate=True;Trusted_Connection=True");
+        //}
     }
 }
 

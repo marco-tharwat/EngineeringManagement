@@ -1,7 +1,21 @@
+using EngineeringManagement.Data;
+using EngineeringManagement.Models;
+using EngineeringManagement.Repositories;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IRepository<Department>, DepartmentRepository>();
+builder.Services.AddScoped<IRepository<Professor>, ProfessorRepository>();
+builder.Services.AddScoped<IRepository<Student>, StudentRepository>();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
+});
 
 var app = builder.Build();
 

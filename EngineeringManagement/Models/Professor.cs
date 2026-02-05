@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EngineeringManagement.Models
 {
@@ -15,6 +16,7 @@ namespace EngineeringManagement.Models
         [Required(ErrorMessage = "Please select a department")]
         public int DepartmentId { get; set; }
         [ValidateNever] // This fixes the validation issue
+        [ForeignKey("DepartmentId")]
         public Department Department { get; set; }
     }
 }

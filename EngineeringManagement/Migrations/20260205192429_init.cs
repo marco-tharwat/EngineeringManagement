@@ -5,7 +5,7 @@
 namespace EngineeringManagement.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialcreatingDb : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,8 +51,8 @@ namespace EngineeringManagement.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FullName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    YearOfStudy = table.Column<int>(type: "int", nullable: false),
-                    DepartmentId = table.Column<int>(type: "int", nullable: false)
+                    DepartmentId = table.Column<int>(type: "int", nullable: false),
+                    YearOfStudy = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -1,5 +1,5 @@
-﻿using EngineeringManagement.Data;
-using EngineeringManagement.Models;
+﻿using EngineeringManagement.Models;
+using EngineeringManagement.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,52 +7,49 @@ namespace EngineeringManagement.Controllers
 {
     public class DepartmentsController : Controller
     {
-        ApplicationDbContext context = new();
+        IRepository<Department> idr;
+        IRepository<Student> isr;
+        IRepository<Professor> ipr;
+
+        public DepartmentsController(IRepository<Department> idr, IRepository<Student> isr, IRepository<Professor> ipr)
+        {
+            this.idr = idr;
+            this.isr = isr;
+            this.ipr = ipr;
+        }
         [HttpGet]
         public IActionResult Index()
         {
-            var departments = context.Departments
-                .Include(d => d.Students)
-                .Include(d => d.Professors)
-                .ToList();
-
-            return View(departments);
+            var departments = idr.GetAll();
+            return View("Index", departments);
         }
         [HttpGet]
         public IActionResult Details(int id)
         {
-            var department = context.Departments.Include(d => d.Students).Include(d => d.Professors).FirstOrDefault(d => d.Id == id);
-            if (department == null)
-            {
-                return NotFound();
-            }
-            return View(department);
+            var dept = idr.GetById(id);
+            return dept == null ? NotFound() : View("Details", dept);
         }
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            return View("Create");
         }
         [HttpPost]
         public IActionResult Create(Department department)
         {
             if (ModelState.IsValid)
             {
-                context.Departments.Add(department);
-                context.SaveChanges();
+                idr.Add(department);
+                idr.Save();
                 return RedirectToAction("Index");
             }
-            return View(department);
+            return View("Create", department);
         }
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var department = context.Departments.Find(id);
-            if (department == null)
-            {
-                return NotFound();
-            }
-            return View(department);
+            var dept = idr.GetById(id);
+            return dept == null ? NotFound() : View("Edit", dept);
         }
         [HttpPost]
         public IActionResult Edit(int id, Department department)
@@ -62,46 +59,43 @@ namespace EngineeringManagement.Controllers
 
             if (ModelState.IsValid)
             {
-                context.Departments.Update(department);
-                context.SaveChanges();
+                idr.Update(department);
+                idr.Save();
                 return RedirectToAction("Index");
             }
-            return View(department);
+            return View("Edit", department);
         }
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            var department = context.Departments.Find(id);
-            ViewBag.AllProfessors = context.Professors.Where(p => p.DepartmentId == id).Count();
-            ViewBag.AllStudents = context.Students.Where(s => s.DepartmentId == id).Count();
+            var department = idr.GetById(id);
+            ViewBag.AllProfessors = department.Professors.Count();
+            ViewBag.AllStudents = department.Students.Count();
             if (department == null)
             {
                 return NotFound();
             }
-            return View(department);
+            return View("Delete", department);
         }
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {
-            var department = context.Departments.Find(id);
-            ViewBag.AllProfessors = context.Professors.Where(p => p.DepartmentId == id).Count();
-            ViewBag.AllStudents = context.Students.Where(s => s.DepartmentId == id).Count();
+            var department = idr.GetById(id);
+            ViewBag.AllProfessors = department.Professors.Count();
+            ViewBag.AllStudents = department.Students.Count();
             if (department == null)
             {
                 return NotFound();
             }
 
-            try
-            {
-                context.Departments.Remove(department);
-                context.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            catch (Exception)
+            if (department.Professors.Count() != 0 || department.Students.Count() != 0)
             {
                 ModelState.AddModelError("", "Couldn't delete, This department still has students or professors associated.");
-                return View(department);
+                return View("Delete", department);
             }
+            idr.Delete(id);
+            idr.Save();
+            return RedirectToAction("Index");
         }
 
     }
